@@ -1,24 +1,13 @@
+import 'package:curso_manguinho/data/usecases/usecases.dart';
+import 'package:curso_manguinho/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'remote_authentication_test.mocks.dart';
-import 'package:curso_manguinho/domain/usecases/authentication.dart';
 
-class RemoteAuthentication {
-  final HttpClient httpClient;
-  final String url;
-
-  RemoteAuthentication({required this.httpClient, required this.url});
-  Future<void> auth({required AuthenticationParams params}) async {
-    await httpClient.request(url: url, method: 'post', body: params.toJson());
-  }
-}
-
-abstract class HttpClient {
-  Future<void> request({required String url, required String method, Map body});
-}
+import 'package:curso_manguinho/data/http/http.dart';
 
 @GenerateMocks([HttpClient])
 void main() {

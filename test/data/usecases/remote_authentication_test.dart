@@ -4,19 +4,21 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'remote_authentication_test.mocks.dart';
+import 'package:curso_manguinho/domain/usecases/authentication.dart';
 
 class RemoteAuthentication {
   final HttpClient httpClient;
   final String url;
 
   RemoteAuthentication({required this.httpClient, required this.url});
-  Future<void> auth() async {
-    await httpClient.request(url: url, method: 'post');
+  Future<void> auth({required AuthenticationParams params}) async {
+    final body = {'email': params.email, 'password': params.secret};
+    await httpClient.request(url: url, method: 'post', body: body);
   }
 }
 
 abstract class HttpClient {
-  Future<void> request({required String url, required String method}) async {}
+  Future<void> request({required String url, required String method, Map body});
 }
 
 @GenerateMocks([HttpClient])
@@ -24,6 +26,8 @@ void main() {
   late HttpClient httpClient;
   late String url;
   late RemoteAuthentication sut;
+  final params = AuthenticationParams(
+      email: faker.internet.email(), secret: faker.internet.password());
 
   setUp(() {
     httpClient = MockHttpClient();
@@ -31,16 +35,16 @@ void main() {
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
   });
   test("Should call HttpClient With correct URL", () async {
-    await sut.auth();
+    await sut.auth(params: params);
 
     verify(httpClient.request(url: url, method: 'post'));
   });
   test("Should call HttpClient With correct Values", () async {
-    await sut.auth();
+    await sut.auth(params: params);
 
     verify(httpClient.request(
-      url: url,
-      method: 'post',
-    ));
+        url: url,
+        method: 'post',
+        body: {'email': params.email, 'password': params.secret}));
   });
 }

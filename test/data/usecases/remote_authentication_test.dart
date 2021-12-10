@@ -12,8 +12,7 @@ class RemoteAuthentication {
 
   RemoteAuthentication({required this.httpClient, required this.url});
   Future<void> auth({required AuthenticationParams params}) async {
-    final body = {'email': params.email, 'password': params.secret};
-    await httpClient.request(url: url, method: 'post', body: body);
+    await httpClient.request(url: url, method: 'post', body: params.toJson());
   }
 }
 
@@ -34,11 +33,7 @@ void main() {
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
   });
-  test("Should call HttpClient With correct URL", () async {
-    await sut.auth(params: params);
 
-    verify(httpClient.request(url: url, method: 'post'));
-  });
   test("Should call HttpClient With correct Values", () async {
     await sut.auth(params: params);
 

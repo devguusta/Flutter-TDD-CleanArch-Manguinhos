@@ -50,7 +50,7 @@ void main() {
     final future = sut.auth(params: params);
     expect(future, throwsA(DomainError.unexpected));
   });
-  test("Shouldthrow UnexpectedError if HttpClient returns 404", () async {
+  test("Shouldthrow UnexpectedError if HttpClient returns 500", () async {
     when(
       httpClient.request(
         url: "url",
@@ -60,9 +60,24 @@ void main() {
           'password': faker.internet.password()
         },
       ),
-    ).thenThrow(HttpError.notfound);
+    ).thenThrow(HttpError.serverError);
 
     final future = sut.auth(params: params);
     expect(future, throwsA(DomainError.unexpected));
+  });
+  test("Shouldthrow UnexpectedError if HttpClient returns 401", () async {
+    when(
+      httpClient.request(
+        url: "url",
+        method: "anyNamed('method')",
+        body: {
+          'email': faker.internet.email(),
+          'password': faker.internet.password()
+        },
+      ),
+    ).thenThrow(HttpError.serverError);
+
+    final future = sut.auth(params: params);
+    expect(future, throwsA(DomainError.invalidCredentials));
   });
 }

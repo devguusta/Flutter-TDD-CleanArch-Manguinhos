@@ -35,7 +35,7 @@ void main() {
         method: 'post',
         body: {'email': params.email, 'password': params.secret}));
   });
-  test("Shouldthrow UnexpectedError if HttpClient returns 400", () async {
+  test("Shouldthrow UnexpectedError if HttpClient returns 404", () async {
     when(
       httpClient.request(
         url: "url",
@@ -47,7 +47,22 @@ void main() {
       ),
     ).thenThrow(HttpError.badRequest);
 
-    final future = await sut.auth(params: params);
+    final future = sut.auth(params: params);
+    expect(future, throwsA(DomainError.unexpected));
+  });
+  test("Shouldthrow UnexpectedError if HttpClient returns 400", () async {
+    when(
+      httpClient.request(
+        url: "url",
+        method: "anyNamed('method')",
+        body: {
+          'email': faker.internet.email(),
+          'password': faker.internet.password()
+        },
+      ),
+    ).thenThrow(HttpError.notfound);
+
+    final future = sut.auth(params: params);
     expect(future, throwsA(DomainError.unexpected));
   });
 }

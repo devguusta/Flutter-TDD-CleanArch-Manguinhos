@@ -75,7 +75,7 @@ void main() {
           'password': faker.internet.password()
         },
       ),
-    ).thenThrow(HttpError.serverError);
+    ).thenThrow(HttpError.unauthorized);
 
     final future = sut.auth(params: params);
     expect(future, throwsA(DomainError.invalidCredentials));

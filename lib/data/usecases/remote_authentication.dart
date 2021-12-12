@@ -14,7 +14,7 @@ class RemoteAuthentication {
         method: 'post',
         body: RemoteAuthenticationParams.fromDomain(params).toJson(),
       );
-    } on HttpError {
+    } on HttpError catch (e) {
       throw DomainError.unexpected;
     }
   }

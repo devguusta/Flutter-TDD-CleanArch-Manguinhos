@@ -20,10 +20,6 @@ import 'package:mockito/mockito.dart' as _i1;
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
-  MockHttpClient() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   _i3.Future<Map<dynamic, dynamic>> request(
           {String? url, String? method, Map<dynamic, dynamic>? body}) =>

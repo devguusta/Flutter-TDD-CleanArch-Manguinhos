@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:curso_manguinho/domain/entities/entities.dart';
+import '../../domain/entities/entities.dart';
+import '../http/http.dart';
 
 class RemoteAccountModel {
   final String accessToken;
@@ -23,6 +24,9 @@ class RemoteAccountModel {
   }
 
   factory RemoteAccountModel.fromMap(Map<String, dynamic> map) {
+    if (!map.containsKey("accessToken")) {
+      throw HttpError.invalidData;
+    }
     return RemoteAccountModel(
       accessToken: map['accessToken'] ?? '',
     );

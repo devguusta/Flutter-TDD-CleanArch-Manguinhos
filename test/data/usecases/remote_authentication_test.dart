@@ -12,7 +12,8 @@ import 'package:curso_manguinho/domain/usecases/usecases.dart';
 
 import 'package:curso_manguinho/data/http/http.dart';
 
-@GenerateMocks([HttpClient])
+@GenerateMocks([],
+    customMocks: [MockSpec<HttpClient>(returnNullOnMissingStub: true)])
 void main() {
   late HttpClient httpClient;
   late String url;
@@ -44,7 +45,7 @@ void main() {
         method: 'post',
         body: {'email': params.email, 'password': params.secret}));
   });
-  test("Shouldthrow UnexpectedError if HttpClient returns 400", () async {
+  test("Should throw UnexpectedError if HttpClient returns 400", () async {
     when(
       httpClient.request(
         url: "url",
@@ -59,7 +60,7 @@ void main() {
     final future = sut.auth(params: params);
     expect(future, throwsA(DomainError.unexpected));
   });
-  test("Shouldthrow UnexpectedError if HttpClient returns 500", () async {
+  test("Should throw UnexpectedError if HttpClient returns 500", () async {
     when(httpClient.request(
       url: "url",
       method: "anyNamed('method')",
@@ -106,5 +107,24 @@ void main() {
 
     final account = await sut.auth(params: params);
     expect(account.token, accessToken);
+  });
+  test(
+      "Should throw UnexpectedError if HttpClient returns 200 with invalid data",
+      () async {
+    when(
+      httpClient.request(
+        url: "url",
+        method: "post",
+        body: {
+          'email': faker.internet.email(),
+          'password': faker.internet.password()
+        },
+      ),
+    ).thenAnswer((_) async => {
+          'invalid_key': "invalidKey",
+        });
+
+    final future = await sut.auth(params: params);
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
